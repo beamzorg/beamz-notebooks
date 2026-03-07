@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { Github, Moon, Star, Sun } from 'lucide-react'
+import { Github, Star } from 'lucide-react'
 import beamzLogo from '../../BEAMZ_logo_new.svg'
-import { useTheme } from '../../hooks/useTheme'
 
 export function Header() {
-  const { theme, toggleTheme } = useTheme()
   const [stars, setStars] = useState<number | null>(null)
   const [version, setVersion] = useState<string | null>(null)
 
@@ -42,13 +40,6 @@ export function Header() {
           </Link>
         </nav>
         <div className="flex items-center justify-end gap-4">
-          <button
-            onClick={toggleTheme}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
           <a
             href="https://github.com/quentinwach/beamz"
             target="_blank"

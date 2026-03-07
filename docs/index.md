@@ -5,11 +5,11 @@ order: 1
 
 # Getting Started with BEAMZ
 
-BEAMZ is an open-source Python library for photonic simulation. It provides a simple, intuitive interface for designing and simulating photonic devices.
+BEAMZ is an electromagnetic simulation package for photonic chip designers using the FDTD method written in Jax. It features a high-level API for fast prototyping with just a few lines of code, an inverse design module for gradient-based optimization using the adjoint method with autodiff.
 
 ## Installation
 
-Install BEAMZ using pip:
+We recommend using [uv](https://docs.astral.sh/uv/) but you can install BEAMZ using pip:
 
 ```bash
 pip install beamz
@@ -25,53 +25,45 @@ pip install -e .
 
 ## Quick Start
 
-Here's a minimal example to get you started:
+Here's a minimal example of a point source in 2D to get you started:
 
 ```python
 import beamz as bz
+import numpy as np
 
-# Create a simple waveguide
-wg = bz.Waveguide(width=0.5, length=10.0)
+WL = 0.6 * µm # wavelength of the source
+TIME = 25 * WL / bz.LIGHT_SPEED # total simulation duration
+N_CLAD, N_CORE = 1, 2 # refractive indices of the core and cladding
+DX, DT = bz.dxdt(WL, max(N_CORE, N_CLAD), dims=2, points_per_wavelength=8)
 
-# Run a simulation
-result = wg.simulate(wavelength=1.55)
+# Create the design
+design = bz.Design(8*µm, 8*µm, material=Material(N_CLAD**2))
+design += bz.Rectangle(width=4*µm, height=4*µm, material=Material(N_CORE**2))
 
-# Plot the field
-result.plot()
+# Define the signal and source
+t = np.arange(0, TIME, DT)
+signal = bz.ramped_cosine(
+    t, 
+    frequency=bz.LIGHT_SPEED/WL, 
+    ramp_duration=3*WL/bz.LIGHT_SPEED, 
+    t_max=TIME/2
+)
+source = bz.GaussianSource(position=(4*µm, 5*µm), width=WL/6, signal=signal)
+
+# Define the simulation (with added PML boundaries)
+sim = bz.Simulation(
+    design=design, 
+    devices=[source], 
+    boundaries=[PML(edges='all', thickness=2*WL)], 
+    time=time_steps, 
+    resolution=DX)
+
+# Run the simulation, interactively showing the $E_z$ field
+sim.run(animate_live="Ez", animation_interval=1, clean_visualization=True)
 ```
 
-## Key Concepts
-
-### Waveguides
-
-Waveguides are the fundamental building blocks of photonic circuits. BEAMZ supports several waveguide types:
-
-- **Strip waveguides** — high confinement, small footprint
-- **Rib waveguides** — lower loss, easier fabrication
-- **Slot waveguides** — enhanced light-matter interaction
-
-### Simulation Modes
-
-BEAMZ offers multiple simulation backends:
-
-1. **Eigenmode solver** — for computing waveguide modes
-2. **FDTD** — for full-wave time-domain simulations
-3. **BPM** — beam propagation method for long structures
-
-## Mathematical Background
-
-The wave equation in a dielectric medium is given by:
-
-$$\nabla^2 \mathbf{E} - \mu_0 \epsilon \frac{\partial^2 \mathbf{E}}{\partial t^2} = 0$$
-
-For a waveguide with refractive index profile $n(x, y)$, the effective index $n_\text{eff}$ satisfies:
-
-$$\beta = \frac{2\pi}{\lambda} n_\text{eff}$$
-
-where $\beta$ is the propagation constant and $\lambda$ is the free-space wavelength.
 
 ## Next Steps
 
 - Check out the [Examples](/beamz-notebooks/) for interactive tutorials
-- Read the full API reference (coming soon)
 - Join the community on [GitHub](https://github.com/quentinwach/beamz)

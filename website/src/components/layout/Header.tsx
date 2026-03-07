@@ -35,7 +35,7 @@ export function Header() {
             Docs
           </Link>
           <Link
-            to="/"
+            to="/examples"
             className="text-muted-foreground hover:text-foreground transition-colors font-medium"
           >
             Examples

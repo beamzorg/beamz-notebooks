@@ -46,6 +46,20 @@ interface NotebookMeta {
   previewImage?: string
 }
 
+interface ParsedDoc {
+  slug: string
+  title: string
+  order: number
+  content: string
+  toc: { id: string; text: string; level: number }[]
+}
+
+interface DocMeta {
+  slug: string
+  title: string
+  order: number
+}
+
 function parseGenTs(filePath: string): ParsedNotebook {
   const content = fs.readFileSync(filePath, 'utf-8')
   const jsonStart = content.indexOf('const data: ParsedNotebook = ') + 'const data: ParsedNotebook = '.length
@@ -59,6 +73,56 @@ function parseMetaRegistry(filePath: string): NotebookMeta[] {
   const jsonStart = content.indexOf('export const notebooks: NotebookMeta[] = ') + 'export const notebooks: NotebookMeta[] = '.length
   const json = content.slice(jsonStart).trim()
   return JSON.parse(json)
+}
+
+function parseDocGenTs(filePath: string): ParsedDoc {
+  const content = fs.readFileSync(filePath, 'utf-8')
+  const jsonStart = content.indexOf('const data: ParsedDoc = ') + 'const data: ParsedDoc = '.length
+  const jsonEnd = content.lastIndexOf('\n\nexport default data')
+  const json = content.slice(jsonStart, jsonEnd)
+  return JSON.parse(json)
+}
+
+function parseDocMetaRegistry(filePath: string): DocMeta[] {
+  const content = fs.readFileSync(filePath, 'utf-8')
+  const jsonStart = content.indexOf('export const docs: DocMeta[] = ') + 'export const docs: DocMeta[] = '.length
+  const json = content.slice(jsonStart).trim()
+  return JSON.parse(json)
+}
+
+function buildDocPage(
+  doc: ParsedDoc,
+  assets: { scripts: string[]; stylesheets: string[] },
+): string {
+  const contentHtml = marked.parse(doc.content) as string
+  const themeScript = `<script>(function(){var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})()</script>`
+  const stylesheetTags = assets.stylesheets.map(href => `<link rel="stylesheet" href="${href}" />`).join('\n    ')
+  const scriptTags = assets.scripts.map(src => `<script type="module" src="${src}"></script>`).join('\n    ')
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${escapeHtml(doc.title)} — BEAMZ Docs</title>
+    <meta name="description" content="${escapeHtml(doc.title)}" />
+    <meta property="og:title" content="${escapeHtml(doc.title)}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="${SITE_URL}/docs/${doc.slug}" />
+    <link rel="canonical" href="${SITE_URL}/docs/${doc.slug}" />
+    <link rel="icon" type="image/png" href="${BASE_URL}/favicon.png" />
+    ${themeScript}
+    ${stylesheetTags}
+  </head>
+  <body>
+    <div id="root">
+      <article style="max-width:800px;margin:0 auto;padding:2rem 1rem">
+        ${contentHtml}
+      </article>
+    </div>
+    ${scriptTags}
+  </body>
+</html>`
 }
 
 function extractAssetPaths(indexHtml: string): { scripts: string[]; stylesheets: string[] } {
@@ -243,6 +307,24 @@ async function main() {
   const homeHtml = buildHomePage(notebooks, assets)
   fs.writeFileSync(path.join(DIST_DIR, 'index.html'), homeHtml)
   console.log('  ✓ Rewrote index.html with gallery content')
+
+  // Generate static docs pages
+  const docsMetaPath = path.join(DATA_DIR, 'docs.gen.ts')
+  if (fs.existsSync(docsMetaPath)) {
+    const docsMeta = parseDocMetaRegistry(docsMetaPath)
+    console.log(`  Found ${docsMeta.length} docs`)
+
+    const docGenFiles = fs.readdirSync(DATA_DIR).filter(f => f.startsWith('doc-') && f.endsWith('.gen.ts'))
+    for (const genFile of docGenFiles) {
+      const doc = parseDocGenTs(path.join(DATA_DIR, genFile))
+      const outDir = path.join(DIST_DIR, 'docs', doc.slug)
+      fs.mkdirSync(outDir, { recursive: true })
+
+      const html = buildDocPage(doc, assets)
+      fs.writeFileSync(path.join(outDir, 'index.html'), html)
+      console.log(`  ✓ Generated docs/${doc.slug}/index.html`)
+    }
+  }
 
   console.log('Done!')
 }

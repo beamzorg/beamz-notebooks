@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "build:notebooks": "tsx scripts/build-notebooks.ts",
-    "predev": "npm run build:notebooks",
+    "build:docs": "tsx scripts/build-docs.ts",
+    "predev": "npm run build:notebooks && npm run build:docs",
     "dev": "vite",
-    "prebuild": "npm run build:notebooks",
+    "prebuild": "npm run build:notebooks && npm run build:docs",
     "build": "tsc -b && vite build && npm run build:static",
     "build:static": "tsx scripts/generate-static-html.ts",
     "lint": "eslint .",

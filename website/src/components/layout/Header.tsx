@@ -28,14 +28,12 @@ export function Header() {
           BEAMZ
         </Link>
         <nav className="flex items-center justify-center gap-6 text-base">
-          <a
-            href="https://quentinwach.com/beamz/"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/docs"
             className="text-muted-foreground hover:text-foreground transition-colors font-medium"
           >
             Docs
-          </a>
+          </Link>
           <Link
             to="/"
             className="text-muted-foreground hover:text-foreground transition-colors font-medium"

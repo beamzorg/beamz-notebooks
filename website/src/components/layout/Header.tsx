@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { Github, Moon, Star, Sun } from 'lucide-react'
-import beamzLogo from '../../BEAMZ_logo.png'
+import beamzLogo from '../../BEAMZ_logo_new.svg'
 import { useTheme } from '../../hooks/useTheme'
 
 export function Header() {

@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { Github, Moon, Star, Sun } from 'lucide-react'
-import beamzLogo from '../../BEAMZ_logo.png'
-import { useTheme } from '../../hooks/useTheme'
+import { Github, Star } from 'lucide-react'
+import beamzLogo from '../../BEAMZ_logo_new.svg'
 
 export function Header() {
-  const { theme, toggleTheme } = useTheme()
   const [stars, setStars] = useState<number | null>(null)
   const [version, setVersion] = useState<string | null>(null)
 
@@ -22,19 +20,26 @@ export function Header() {
 
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-14 px-4">
-        <Link to="/" className="flex items-center gap-2 font-semibold text-lg hover:opacity-80 transition-opacity">
-          <img src={beamzLogo} alt="BEAMZ" className="h-7 w-auto" />
-          BEAMZ Notebooks
+      <div className="max-w-7xl mx-auto grid grid-cols-3 items-center h-14 px-4">
+        <Link to="/" className="flex items-center gap-1 font-bold text-lg tracking-tight hover:opacity-80 transition-opacity">
+          <img src={beamzLogo} alt="BEAMZ" className="h-7 w-auto invert dark:invert-0" />
+          BEAMZ
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
-          <button
-            onClick={toggleTheme}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Toggle theme"
+        <nav className="flex items-center justify-center gap-6 text-base">
+          <Link
+            to="/docs"
+            className="text-muted-foreground hover:text-foreground transition-colors font-medium"
           >
-            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
+            Docs
+          </Link>
+          <Link
+            to="/examples"
+            className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+          >
+            Examples
+          </Link>
+        </nav>
+        <div className="flex items-center justify-end gap-4">
           <a
             href="https://github.com/quentinwach/beamz"
             target="_blank"
@@ -53,7 +58,7 @@ export function Header() {
               </span>
             )}
           </a>
-        </nav>
+        </div>
       </div>
     </header>
   )

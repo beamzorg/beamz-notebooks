@@ -46,6 +46,20 @@ interface NotebookMeta {
   previewImage?: string
 }
 
+interface ParsedDoc {
+  slug: string
+  title: string
+  order: number
+  content: string
+  toc: { id: string; text: string; level: number }[]
+}
+
+interface DocMeta {
+  slug: string
+  title: string
+  order: number
+}
+
 function parseGenTs(filePath: string): ParsedNotebook {
   const content = fs.readFileSync(filePath, 'utf-8')
   const jsonStart = content.indexOf('const data: ParsedNotebook = ') + 'const data: ParsedNotebook = '.length
@@ -59,6 +73,56 @@ function parseMetaRegistry(filePath: string): NotebookMeta[] {
   const jsonStart = content.indexOf('export const notebooks: NotebookMeta[] = ') + 'export const notebooks: NotebookMeta[] = '.length
   const json = content.slice(jsonStart).trim()
   return JSON.parse(json)
+}
+
+function parseDocGenTs(filePath: string): ParsedDoc {
+  const content = fs.readFileSync(filePath, 'utf-8')
+  const jsonStart = content.indexOf('const data: ParsedDoc = ') + 'const data: ParsedDoc = '.length
+  const jsonEnd = content.lastIndexOf('\n\nexport default data')
+  const json = content.slice(jsonStart, jsonEnd)
+  return JSON.parse(json)
+}
+
+function parseDocMetaRegistry(filePath: string): DocMeta[] {
+  const content = fs.readFileSync(filePath, 'utf-8')
+  const jsonStart = content.indexOf('export const docs: DocMeta[] = ') + 'export const docs: DocMeta[] = '.length
+  const json = content.slice(jsonStart).trim()
+  return JSON.parse(json)
+}
+
+function buildDocPage(
+  doc: ParsedDoc,
+  assets: { scripts: string[]; stylesheets: string[] },
+): string {
+  const contentHtml = marked.parse(doc.content) as string
+  const themeScript = `<script>(function(){var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})()</script>`
+  const stylesheetTags = assets.stylesheets.map(href => `<link rel="stylesheet" href="${href}" />`).join('\n    ')
+  const scriptTags = assets.scripts.map(src => `<script type="module" src="${src}"></script>`).join('\n    ')
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${escapeHtml(doc.title)} — BEAMZ Docs</title>
+    <meta name="description" content="${escapeHtml(doc.title)}" />
+    <meta property="og:title" content="${escapeHtml(doc.title)}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="${SITE_URL}/docs/${doc.slug}" />
+    <link rel="canonical" href="${SITE_URL}/docs/${doc.slug}" />
+    <link rel="icon" type="image/png" href="${BASE_URL}/favicon.png" />
+    ${themeScript}
+    ${stylesheetTags}
+  </head>
+  <body>
+    <div id="root">
+      <article style="max-width:800px;margin:0 auto;padding:2rem 1rem">
+        ${contentHtml}
+      </article>
+    </div>
+    ${scriptTags}
+  </body>
+</html>`
 }
 
 function extractAssetPaths(indexHtml: string): { scripts: string[]; stylesheets: string[] } {
@@ -155,7 +219,7 @@ function buildNotebookPage(
 </html>`
 }
 
-function buildHomePage(
+function buildGalleryPage(
   notebooks: NotebookMeta[],
   assets: { scripts: string[]; stylesheets: string[] },
 ): string {
@@ -180,8 +244,8 @@ function buildHomePage(
     <meta property="og:title" content="BEAMZ Examples" />
     <meta property="og:description" content="Interactive examples and tutorials for BEAMZ photonic simulation." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="${SITE_URL}" />
-    <link rel="canonical" href="${SITE_URL}" />
+    <meta property="og:url" content="${SITE_URL}/examples" />
+    <link rel="canonical" href="${SITE_URL}/examples" />
     <link rel="icon" type="image/png" href="${BASE_URL}/favicon.png" />
     ${themeScript}
     ${stylesheetTags}
@@ -191,6 +255,46 @@ function buildHomePage(
       <main style="max-width:800px;margin:0 auto;padding:2rem 1rem">
         <h1>BEAMZ Examples</h1>
         ${galleryHtml}
+      </main>
+    </div>
+    ${scriptTags}
+  </body>
+</html>`
+}
+
+function buildLandingPage(
+  assets: { scripts: string[]; stylesheets: string[] },
+): string {
+  const themeScript = `<script>(function(){var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})()</script>`
+  const stylesheetTags = assets.stylesheets.map(href => `<link rel="stylesheet" href="${href}" />`).join('\n    ')
+  const scriptTags = assets.scripts.map(src => `<script type="module" src="${src}"></script>`).join('\n    ')
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BEAMZ — Simulate Light. Design Photonics.</title>
+    <meta name="description" content="An open-source Python library for photonic device simulation — from waveguides to full circuits." />
+    <meta property="og:title" content="BEAMZ — Simulate Light. Design Photonics." />
+    <meta property="og:description" content="An open-source Python library for photonic device simulation — from waveguides to full circuits." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="${SITE_URL}" />
+    <link rel="canonical" href="${SITE_URL}" />
+    <link rel="icon" type="image/png" href="${BASE_URL}/favicon.png" />
+    ${themeScript}
+    ${stylesheetTags}
+  </head>
+  <body>
+    <div id="root">
+      <main style="max-width:800px;margin:0 auto;padding:2rem 1rem;text-align:center">
+        <h1>BEAMZ</h1>
+        <p style="font-size:1.25rem;font-weight:600">Simulate Light. Design Photonics.</p>
+        <p>An open-source Python library for photonic device simulation — from waveguides to full circuits.</p>
+        <p style="margin-top:1.5rem">
+          <a href="${BASE_URL}/docs" style="margin-right:1rem">Get Started</a>
+          <a href="${BASE_URL}/examples">View Examples</a>
+        </p>
       </main>
     </div>
     ${scriptTags}
@@ -239,10 +343,35 @@ async function main() {
     console.log(`  ✓ Generated examples/${nb.slug}/index.html`)
   }
 
-  // Rewrite index.html with gallery content
-  const homeHtml = buildHomePage(notebooks, assets)
+  // Generate /examples/ gallery page
+  const examplesDir = path.join(DIST_DIR, 'examples')
+  fs.mkdirSync(examplesDir, { recursive: true })
+  const galleryHtml = buildGalleryPage(notebooks, assets)
+  fs.writeFileSync(path.join(examplesDir, 'index.html'), galleryHtml)
+  console.log('  ✓ Generated examples/index.html')
+
+  // Rewrite index.html with landing page content
+  const homeHtml = buildLandingPage(assets)
   fs.writeFileSync(path.join(DIST_DIR, 'index.html'), homeHtml)
-  console.log('  ✓ Rewrote index.html with gallery content')
+  console.log('  ✓ Rewrote index.html with landing page content')
+
+  // Generate static docs pages
+  const docsMetaPath = path.join(DATA_DIR, 'docs.gen.ts')
+  if (fs.existsSync(docsMetaPath)) {
+    const docsMeta = parseDocMetaRegistry(docsMetaPath)
+    console.log(`  Found ${docsMeta.length} docs`)
+
+    const docGenFiles = fs.readdirSync(DATA_DIR).filter(f => f.startsWith('doc-') && f.endsWith('.gen.ts'))
+    for (const genFile of docGenFiles) {
+      const doc = parseDocGenTs(path.join(DATA_DIR, genFile))
+      const outDir = path.join(DIST_DIR, 'docs', doc.slug)
+      fs.mkdirSync(outDir, { recursive: true })
+
+      const html = buildDocPage(doc, assets)
+      fs.writeFileSync(path.join(outDir, 'index.html'), html)
+      console.log(`  ✓ Generated docs/${doc.slug}/index.html`)
+    }
+  }
 
   console.log('Done!')
 }

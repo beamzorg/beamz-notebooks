@@ -37,7 +37,7 @@ const components: Components = {
     const text = String(children)
     return <h4 id={slugify(text)} {...props}>{children}</h4>
   },
-  img: ({ src, alt, ...props }) => <img src={src ?? ''} alt={alt ?? ''} {...props} className="max-w-full h-auto" />,
+  img: ({ src, alt, ...props }) => <img src={src ?? ''} alt={alt ?? ''} {...props} className="max-w-full h-auto rounded" />,
 }
 
 export function MarkdownCell({ cell }: { cell: ParsedCell }) {

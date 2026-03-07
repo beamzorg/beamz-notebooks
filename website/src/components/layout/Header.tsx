@@ -22,12 +22,28 @@ export function Header() {
 
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-14 px-4">
+      <div className="max-w-7xl mx-auto grid grid-cols-3 items-center h-14 px-4">
         <Link to="/" className="flex items-center gap-1 font-bold text-lg tracking-tight hover:opacity-80 transition-opacity">
           <img src={beamzLogo} alt="BEAMZ" className="h-7 w-auto invert dark:invert-0" />
           BEAMZ
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
+        <nav className="flex items-center justify-center gap-6 text-base">
+          <a
+            href="https://quentinwach.com/beamz/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+          >
+            Docs
+          </a>
+          <Link
+            to="/"
+            className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+          >
+            Examples
+          </Link>
+        </nav>
+        <div className="flex items-center justify-end gap-4">
           <button
             onClick={toggleTheme}
             className="text-muted-foreground hover:text-foreground transition-colors"
@@ -53,7 +69,7 @@ export function Header() {
               </span>
             )}
           </a>
-        </nav>
+        </div>
       </div>
     </header>
   )

@@ -33,7 +33,7 @@ export function Footer() {
             MIT License
           </a>
         </nav>
-        <p>&copy; {new Date().getFullYear()} BEAMZ</p>
+        <p>Created by <a href="https://quentinwach.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors underline">Quentin Wach</a>.</p>
       </div>
     </footer>
   )

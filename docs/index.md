@@ -62,6 +62,11 @@ sim = bz.Simulation(
 sim.run(animate_live="Ez", animation_interval=1, clean_visualization=True)
 ```
 
+<video controls width="100%">
+  <source src="../assets/videos/dipole.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
 
 ## Next Steps
 

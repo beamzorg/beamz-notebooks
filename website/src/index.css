@@ -155,6 +155,19 @@ html {
   @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
 }
 
+.notebook-content .doc-video-frame {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.notebook-content .doc-video-frame > video {
+  display: block;
+  width: calc(100% + 2px);
+  max-width: none;
+  margin: -1px;
+}
+
 /* Shiki code blocks — !important needed to override Shiki inline styles */
 .group pre.shiki {
   margin: 0 !important;
@@ -262,4 +275,3 @@ html {
 .katex-display {
   @apply my-4 overflow-x-auto;
 }
-

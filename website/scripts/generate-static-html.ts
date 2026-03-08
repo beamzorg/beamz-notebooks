@@ -6,8 +6,8 @@ import { marked } from 'marked'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DIST_DIR = path.resolve(__dirname, '../dist')
 const DATA_DIR = path.resolve(__dirname, '../src/data')
-const BASE_URL = '/beamz-notebooks'
-const SITE_URL = 'https://quentinwach.com/beamz-notebooks'
+const BASE_URL = '/beamz'
+const SITE_URL = 'https://quentinwach.com/beamz'
 
 interface ParsedOutput {
   type: string

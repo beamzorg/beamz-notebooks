@@ -2,7 +2,7 @@
 
 A curated collection of interactive Jupyter notebooks for learning about optics, photonics, and laser physics.
 
-**Live site:** [https://quentinwach.com/beamz-notebooks/](https://quentinwach.com/beamz-notebooks/)
+**Live site:** [https://quentinwach.com/beamz/](https://quentinwach.com/beamz/)
 
 
 ## How Do I Contribute?

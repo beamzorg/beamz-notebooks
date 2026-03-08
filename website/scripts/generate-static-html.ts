@@ -110,7 +110,7 @@ function buildDocPage(
     <meta property="og:type" content="article" />
     <meta property="og:url" content="${SITE_URL}/docs/${doc.slug}" />
     <link rel="canonical" href="${SITE_URL}/docs/${doc.slug}" />
-    <link rel="icon" type="image/png" href="${BASE_URL}/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="${BASE_URL}/favicon.svg" />
     ${themeScript}
     ${stylesheetTags}
   </head>
@@ -202,7 +202,7 @@ function buildNotebookPage(
     <meta property="og:url" content="${SITE_URL}/examples/${nb.slug}" />
     ${ogImage}
     <link rel="canonical" href="${SITE_URL}/examples/${nb.slug}" />
-    <link rel="icon" type="image/png" href="${BASE_URL}/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="${BASE_URL}/favicon.svg" />
     ${themeScript}
     ${stylesheetTags}
   </head>
@@ -246,7 +246,7 @@ function buildGalleryPage(
     <meta property="og:type" content="website" />
     <meta property="og:url" content="${SITE_URL}/examples" />
     <link rel="canonical" href="${SITE_URL}/examples" />
-    <link rel="icon" type="image/png" href="${BASE_URL}/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="${BASE_URL}/favicon.svg" />
     ${themeScript}
     ${stylesheetTags}
   </head>
@@ -281,7 +281,7 @@ function buildLandingPage(
     <meta property="og:type" content="website" />
     <meta property="og:url" content="${SITE_URL}" />
     <link rel="canonical" href="${SITE_URL}" />
-    <link rel="icon" type="image/png" href="${BASE_URL}/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="${BASE_URL}/favicon.svg" />
     ${themeScript}
     ${stylesheetTags}
   </head>

@@ -5,7 +5,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/beamz/',
+  base: '/beamz-notebooks/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

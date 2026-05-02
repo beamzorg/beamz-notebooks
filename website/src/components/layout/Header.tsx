@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { Github, Star } from 'lucide-react'
+import { Github, Moon, Star, Sun } from 'lucide-react'
 import beamzLogo from '../../BEAMZ_logo_new.svg'
+import { useTheme } from '@/hooks/useTheme'
 
 export function Header() {
   const [stars, setStars] = useState<number | null>(null)
   const [version, setVersion] = useState<string | null>(null)
+  const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
     fetch('https://api.github.com/repos/quentinwach/beamz')
@@ -40,6 +42,18 @@ export function Header() {
           </Link>
         </nav>
         <div className="flex items-center justify-end gap-4">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            className="flex items-center justify-center rounded-lg p-2 text-foreground glass-btn"
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </button>
           <a
             href="https://github.com/quentinwach/beamz"
             target="_blank"
@@ -47,7 +61,7 @@ export function Header() {
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-foreground glass-btn"
           >
             <Github className="h-4 w-4" />
-            <span>Get Started</span>
+            <span>GitHub</span>
             {version && (
               <span className="text-xs opacity-70">{version}</span>
             )}

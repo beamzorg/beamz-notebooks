@@ -29,7 +29,7 @@ function HtmlOutput({ output }: { output: ParsedOutput }) {
   })
   return (
     <div
-      className="my-2 overflow-x-auto [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-border [&_th]:px-2 [&_th]:py-1 [&_th]:bg-muted"
+      className="notebook-html-output my-2"
       dangerouslySetInnerHTML={{ __html: clean }}
     />
   )

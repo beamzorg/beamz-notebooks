@@ -147,9 +147,44 @@ html {
 .notebook-content li { @apply mb-1; }
 .notebook-content blockquote { @apply border-l-4 border-muted pl-4 italic my-4; }
 .notebook-content a { @apply text-primary underline underline-offset-4 hover:text-primary/80; }
-.notebook-content table { @apply w-full border-collapse my-4; }
-.notebook-content th { @apply border border-border px-3 py-2 bg-muted font-semibold text-left; }
-.notebook-content td { @apply border border-border px-3 py-2; }
+.notebook-content table,
+.notebook-html-output table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.74rem;
+  line-height: 1.15;
+}
+
+.notebook-content th,
+.notebook-content td,
+.notebook-html-output th,
+.notebook-html-output td {
+  border: 1px solid var(--border);
+  padding: 0.18rem 0.3rem;
+  vertical-align: top;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.notebook-content th,
+.notebook-html-output th {
+  background: var(--muted);
+  font-weight: 600;
+  text-align: left;
+}
+
+.notebook-html-output table.dataframe {
+  font-size: 0.68rem;
+}
+
+.notebook-html-output table.dataframe th,
+.notebook-html-output table.dataframe td {
+  padding: 0.14rem 0.24rem;
+}
 
 .notebook-content code:not(pre code) {
   @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
